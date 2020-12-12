@@ -15,7 +15,7 @@ Parameters:
     Default: /dev/tokens
 
 Resources:
-  GrafaScriptsStateMachine:
+  ScriptsStateMachine:
     Type: AWS::Serverless::StateMachine
     Properties:
       DefinitionUri: workflows/workflow.json
@@ -103,13 +103,13 @@ Resources:
 Outputs:
   AWSLambdaFunction1:
     Description: "Hello World Lambda Function ARN"
-    Value: !GetAtt StoreXmlAssetsFunction.Arn
+    Value: !GetAtt AWSLambdaFunction1.Arn
   AWSLambdaFunction1IamRole:
     Description: "Implicit IAM Role created for Hello World function"
     Value: !GetAtt AWSLambdaFunction1.Arn
   AWSLambdaFunction2:
     Description: "Hello World Lambda Function ARN"
-    Value: !GetAtt PollGrafaSourcesFunction.Arn
+    Value: !GetAtt AWSLambdaFunction2.Arn
   AWSLambdaFunction2IamRole:
     Description: "Implicit IAM Role created for Hello World function"
     Value: !GetAtt AWSLambdaFunction2.Arn
