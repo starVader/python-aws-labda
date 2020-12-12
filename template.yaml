@@ -1,0 +1,124 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  lambda-demo-scripts
+
+  SAM Template for AWS lambda
+
+Globals:
+  Function:
+    Timeout: 3
+
+Parameters:
+  SSMDocumentPath:
+    Type: String
+    Default: /dev/tokens
+
+Resources:
+  GrafaScriptsStateMachine:
+    Type: AWS::Serverless::StateMachine
+    Properties:
+      DefinitionUri: workflows/workflow.json
+      DefinitionSubstitutions:
+        AWSLambdaFunction1: !GetAtt AWSLambdaFunction1.Arn
+        AWSLambdaFunction2: !GetAtt AWSLambdaFunction2.Arn
+
+      Policies: # Find out more about SAM policy templates: https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-policy-templates.html
+        - LambdaInvokePolicy:
+            FunctionName: !Ref AWSLambdaFunction1
+        - LambdaInvokePolicy:
+            FunctionName: !Ref AWSLambdaFunction2
+
+  AWSLambdaFunction1:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: lambdas/
+      Handler: lambda_with_step_function.lambda_handler
+      ReservedConcurrentExecutions: 2
+      Runtime: python3.8
+      Timeout: 900
+      Role: !GetAtt AWSLambdaFunctionRole.Arn
+      Environment:
+        Variables:
+          SSMPATH: !Ref SSMDocumentPath
+
+  AWSLambdaFunction2:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: lambdas/
+      Handler: lambda_demo.lambda_handler
+      ReservedConcurrentExecutions: 2
+      Runtime: python3.8
+      Timeout: 900
+      Role: !GetAtt AWSLambdaFunctionRole.Arn
+      Environment:
+        Variables:
+          SSMPATH: !Ref SSMDocumentPath
+
+  AWSLambdaFunctionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+        - Action:
+          - sts:AssumeRole
+          Effect: Allow
+          Principal:
+            Service:
+            - lambda.amazonaws.com
+        Version: '2012-10-17'
+      Policies:
+      - PolicyDocument:
+          Statement:
+          - Action:
+            - ssm:Get*
+            - ssm:List*
+            - ssm:Describe*
+            Effect: Allow
+            Resource:
+              "*"
+          Version: '2012-10-17'
+        PolicyName: ScrpitsParameterStoreAccess
+      - PolicyDocument:
+          Statement:
+          - Action:
+            - states:*
+            Effect: Allow
+            Resource:
+              "*"
+          Version: '2012-10-17'
+        PolicyName: ScriptsStatemachineRole
+      - PolicyDocument:
+          Statement:
+          - Action:
+            - iam:PassRole
+            Effect: Allow
+            Resource:
+              "arn:aws:iam::*:role/*"
+          Version: '2012-10-17'
+        PolicyName: ScriptsIAMRole
+      - PolicyDocument:
+          Statement:
+          - Action:
+            - "logs:CreateLogGroup"
+            - "logs:CreateLogStream"
+            - "logs:PutLogEvents"
+            Effect: Allow
+            Resource:
+              "*"
+          Version: '2012-10-17'
+        PolicyName: CloudWatchLogs
+
+Outputs:
+  AWSLambdaFunction1:
+    Description: "Hello World Lambda Function ARN"
+    Value: !GetAtt StoreXmlAssetsFunction.Arn
+  AWSLambdaFunction1IamRole:
+    Description: "Implicit IAM Role created for Hello World function"
+    Value: !GetAtt AWSLambdaFunction1.Arn
+  AWSLambdaFunction2:
+    Description: "Hello World Lambda Function ARN"
+    Value: !GetAtt PollGrafaSourcesFunction.Arn
+  AWSLambdaFunction2IamRole:
+    Description: "Implicit IAM Role created for Hello World function"
+    Value: !GetAtt AWSLambdaFunction2.Arn
