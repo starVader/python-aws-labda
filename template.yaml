@@ -54,6 +54,7 @@ Resources:
       Environment:
         Variables:
           SSMPATH: !Ref SSMDocumentPath
+          STEP_FUNCTION_ARN: !GetAtt ScriptsStateMachine.Arn
 
   AWSLambdaFunctionRole:
     Type: AWS::IAM::Role
