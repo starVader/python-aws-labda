@@ -1,6 +1,6 @@
 {
   "Comment": "A Hello World example of the Amazon States Language",
-  "StartAt": "Run-AWSLambdaFunction1",
+  "StartAt": "Run-AWSLambdaFunction2",
   "States": {
     "Run-AWSLambdaFunction2": {
       "Type": "Task",
