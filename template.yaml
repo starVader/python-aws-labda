@@ -91,15 +91,6 @@ Resources:
       - PolicyDocument:
           Statement:
           - Action:
-            - iam:PassRole
-            Effect: Allow
-            Resource:
-              "arn:aws:iam::*:role/*"
-          Version: '2012-10-17'
-        PolicyName: ScriptsIAMRole
-      - PolicyDocument:
-          Statement:
-          - Action:
             - "logs:CreateLogGroup"
             - "logs:CreateLogStream"
             - "logs:PutLogEvents"
