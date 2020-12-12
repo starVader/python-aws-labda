@@ -20,20 +20,18 @@ Resources:
     Properties:
       DefinitionUri: workflows/workflow.json
       DefinitionSubstitutions:
-        AWSLambdaFunction1: !GetAtt AWSLambdaFunction1.Arn
-        AWSLambdaFunction2: !GetAtt AWSLambdaFunction2.Arn
+        AWSLambdaFunction: !GetAtt AWSLambdaFunction.Arn
 
       Policies: # Find out more about SAM policy templates: https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-policy-templates.html
-        - LambdaInvokePolicy:
-            FunctionName: !Ref AWSLambdaFunction1
-        - LambdaInvokePolicy:
-            FunctionName: !Ref AWSLambdaFunction2
 
-  AWSLambdaFunction1:
+        - LambdaInvokePolicy:
+            FunctionName: !Ref AWSLambdaFunction
+
+  AWSLambdaFunction:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: lambdas/
-      Handler: lambda_with_step_function.lambda_handler
+      Handler: lambda_demo.lambda_handler
       ReservedConcurrentExecutions: 2
       Runtime: python3.8
       Timeout: 900
@@ -42,11 +40,11 @@ Resources:
         Variables:
           SSMPATH: !Ref SSMDocumentPath
 
-  AWSLambdaFunction2:
+  AWSStepLambdaFunction:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: lambdas/
-      Handler: lambda_demo.lambda_handler
+      Handler: lambda_with_step_function.lambda_handler
       ReservedConcurrentExecutions: 2
       Runtime: python3.8
       Timeout: 900
@@ -102,15 +100,15 @@ Resources:
         PolicyName: CloudWatchLogs
 
 Outputs:
-  AWSLambdaFunction1:
+  AWSLambdaFunction:
     Description: "Hello World Lambda Function ARN"
-    Value: !GetAtt AWSLambdaFunction1.Arn
-  AWSLambdaFunction1IamRole:
+    Value: !GetAtt AWSLambdaFunction.Arn
+  AWSLambdaFunctionIamRole:
     Description: "Implicit IAM Role created for Hello World function"
-    Value: !GetAtt AWSLambdaFunction1.Arn
-  AWSLambdaFunction2:
+    Value: !GetAtt AWSLambdaFunction.Arn
+  AWSStepLambdaFunction:
     Description: "Hello World Lambda Function ARN"
-    Value: !GetAtt AWSLambdaFunction2.Arn
-  AWSLambdaFunction2IamRole:
+    Value: !GetAtt AWSStepLambdaFunction.Arn
+  AWSStepLambdaFunctionIamRole:
     Description: "Implicit IAM Role created for Hello World function"
-    Value: !GetAtt AWSLambdaFunction2.Arn
+    Value: !GetAtt AWSStepLambdaFunction.Arn

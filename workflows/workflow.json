@@ -1,10 +1,10 @@
 {
   "Comment": "A Hello World example of the Amazon States Language",
-  "StartAt": "Run-AWSLambdaFunction2",
+  "StartAt": "Run-AWSLambdaFunction",
   "States": {
-    "Run-AWSLambdaFunction2": {
+    "Run-AWSLambdaFunction": {
       "Type": "Task",
-      "Resource": "${AWSLambdaFunction2}",
+      "Resource": "${AWSLambdaFunction}",
       "ResultPath": "$.result",
       "Next": "Success-State"
     },
