@@ -8,11 +8,6 @@
       "ResultPath": "$.result",
       "Next": "Success-State"
     },
-    "Fail-State": {
-      "Type": "Fail",
-      "Error": "$.result",
-      "Cause": "Caused By Message"
-    },
     "Success-State": {
       "Type": "Succeed"
     }
